@@ -1,35 +1,43 @@
 //
-//  ContentView.swift
+//  ItemList.swift
 //  Item2.0
 //
-//  Created by Joseph DeWeese on 11/11/24.
+//  Created by Joseph DeWeese on 11/13/24.
 //
 
 import SwiftUI
 import SwiftData
 
-struct ContentView: View {
+struct ItemList: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
-
+    @State private var showAddItemScreen = false
     var body: some View {
-        NavigationSplitView {
+        Group {
             List {
                 ForEach(items) { item in
                     NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
+                        EditItemScreen()
                     } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+                        ItemCardView( item: item)
                     }
+                    .listRowSeparator(.hidden)
                 }
                 .onDelete(perform: deleteItems)
             }
+            .listStyle(PlainListStyle())
+            .sheet(isPresented: $showAddItemScreen, content: {
+                AddItemScreen()
+                    .presentationDetents([.height(400)])
+            })
+            
+            
 #if os(macOS)
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
 #endif
             .toolbar {
 #if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .navigationBarLeading) {
                     EditButton()
                 }
 #endif
@@ -39,15 +47,13 @@ struct ContentView: View {
                     }
                 }
             }
-        } detail: {
-            Text("Select an item")
-        }
+        }///group
     }
-
     private func addItem() {
         withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
+            showAddItemScreen = true
+    //            let newItem = Item(dateAdded: Date())
+    //            modelContext.insert(newItem)
         }
     }
 
@@ -58,9 +64,9 @@ struct ContentView: View {
             }
         }
     }
+
 }
 
 #Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+    ItemList()
 }
