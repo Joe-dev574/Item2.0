@@ -17,21 +17,21 @@ struct ItemCardView: View {
     let item: Item
     var body: some View {
         ZStack {
-            Color.black.opacity(0.4)
+           
+            RoundedRectangle(cornerRadius: 10.0, style: .continuous)
+                .fill(backgroundGradient)
+                .ignoresSafeArea(.all)
             
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 5) {
                     Text(item.title)
                         .font(.headline)
                         .fontWeight(.bold)
                         .fontDesign(.serif)
-                     
-                    
                     Text(item.summary)
                         .font(.body)
                         .fontDesign(.serif)
                         .foregroundStyle(.blue)
                         .lineLimit(3)
-                    
                     HStack(alignment: .firstTextBaseline){
                         Spacer()
                         Text("Date Added:")
@@ -44,8 +44,9 @@ struct ItemCardView: View {
                             .fontWeight(.bold)
                             .fontDesign(.serif)
                             .foregroundStyle(.secondary)
-                        Spacer( )
-                    }.padding(.bottom, 3)
+                        
+                    }
+                    .padding(.top, 3)
                     if let tags = item.tags {
                         ViewThatFits {
                             TagsStackView(tags: tags)
@@ -54,9 +55,11 @@ struct ItemCardView: View {
                             TagsStackView(tags: tags)
                         }
                     }
-                }.padding(.horizontal, 7)
+                }.padding(.horizontal, 10)
             }
-            .padding()
+        .padding(.bottom, 7)
+           
+          
         }
     }
 

@@ -13,20 +13,20 @@ struct ItemListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
     @State private var showAddItemScreen = false
-    
+    @State private var selectedItem = false
     var body: some View {
         NavigationSplitView {
             Group {
                 List {
                     ForEach(items) { item in
-                        NavigationLink {
-                            EditItemScreen()
-                        } label: {
+                        NavigationLink{
+                            TabBarHome()
+                        }   label: {
                             ItemCardView( item: item)
                         }
-                        .listRowSeparator(.hidden)
                     }
                     .onDelete(perform: deleteItems)
+                        .listRowSeparator(.hidden)
                 }
                 .listStyle(PlainListStyle())
                 .sheet(isPresented: $showAddItemScreen, content: {

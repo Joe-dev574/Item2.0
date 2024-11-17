@@ -13,58 +13,60 @@ struct ItemList: View {
     @Query private var items: [Item]
     @State private var showAddItemScreen = false
     var body: some View {
-        Group {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        EditItemScreen()
-                    } label: {
-                        ItemCardView( item: item)
+        NavigationStack {
+            Group {
+                List {
+                    ForEach(items) { item in
+                        NavigationLink {
+                            EditItemScreen(item: item)
+                        } label: {
+                            ItemCardView( item: item)
+                        }
+                        .listRowSeparator(.hidden)
                     }
-                    .listRowSeparator(.hidden)
+                    .onDelete(perform: deleteItems)
                 }
-                .onDelete(perform: deleteItems)
-            }
-            .listStyle(PlainListStyle())
-            .sheet(isPresented: $showAddItemScreen, content: {
-                AddItemScreen()
-                    .presentationDetents([.height(400)])
-            })
-            
-            
+                .listStyle(PlainListStyle())
+                .sheet(isPresented: $showAddItemScreen, content: {
+                    AddItemScreen()
+                        .presentationDetents([.height(400)])
+                })
+                
+                
 #if os(macOS)
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
+                .navigationSplitViewColumnWidth(min: 180, ideal: 200)
 #endif
-            .toolbar {
+                .toolbar {
 #if os(iOS)
-                ToolbarItem(placement: .navigationBarLeading) {
-                    EditButton()
-                }
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        EditButton()
+                    }
 #endif
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
+                    ToolbarItem {
+                        Button(action: addItem) {
+                            Label("Add Item", systemImage: "plus")
+                        }
                     }
                 }
-            }
-        }///group
-    }
-    private func addItem() {
-        withAnimation {
-            showAddItemScreen = true
-    //            let newItem = Item(dateAdded: Date())
-    //            modelContext.insert(newItem)
+            }///group
         }
     }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+        private func addItem() {
+            withAnimation {
+                showAddItemScreen = true
+                //            let newItem = Item(dateAdded: Date())
+                //            modelContext.insert(newItem)
             }
         }
-    }
-
+    
+        private func deleteItems(offsets: IndexSet) {
+            withAnimation {
+                for index in offsets {
+                    modelContext.delete(items[index])
+                }
+            }
+        }
+    
 }
 
 #Preview {
